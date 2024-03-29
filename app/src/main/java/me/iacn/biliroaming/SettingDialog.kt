@@ -247,9 +247,10 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
 
         private fun checkCompatibleVersion() {
             val versionCode = getVersionCode(packageName)
-            var supportMusicNotificationHook = versionCode >= 7500300 &&
-                    // from bilibili
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Build.MANUFACTURER.lowercase().equals("huawei")
+        //    var supportMusicNotificationHook = versionCode >= 7500300 &&
+        //            // from bilibili
+        //            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Build.MANUFACTURER.lowercase().equals("huawei")
+            var supportMusicNotificationHook = true
             var supportCustomizeTab = true
             val supportFullSplash = try {
                 instance.splashInfoClass?.getMethod("getMode") != null
@@ -269,6 +270,8 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
                     supportAddTag = false
                 }
             }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+                supportMusicNotificationHook = false
             val supportSplashHook = instance.brandSplashClass != null
             val supportTeenagersMode = instance.teenagersModeDialogActivityClass != null
             val supportStoryVideo = instance.storyVideoActivityClass != null
@@ -284,13 +287,17 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
                 disablePreference("full_splash")
             }
             if (!supportMusicNotificationHook) {
-                if (versionCode >= 7500300) {
-                    disablePreference(
-                            "music_notification",
-                            context.getString(R.string.os_not_support))
-                } else {
-                    disablePreference("music_notification")
-                }
+                // if (versionCode >= 7500300) {
+                //     disablePreference(
+                //             "music_notification",
+                //             context.getString(R.string.os_not_support))
+                // } else {
+                //     disablePreference("music_notification")
+                // }
+                disablePreference(
+                    "music_notification",
+                    context.getString(R.string.os_not_support)
+                )
             }
             if (!supportMain) {
                 disablePreference("main_func", "Android O以下系统不支持64位Xpatch版，请使用32位版")
